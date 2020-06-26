@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.wadreamer.cloudlearning.mapper.auto.CourseStMapper">
+    <resultMap id="BaseResultMap" type="club.wadreamer.cloudlearning.model.auto.CourseSt">
+        <id column="st_id" jdbcType="INTEGER" property="stId"/>
+        <result column="st_name" jdbcType="VARCHAR" property="stName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    st_id, st_name
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from c_course_st
+        where st_id = #{stId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from c_course_st
+    where st_id = #{stId,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="club.wadreamer.cloudlearning.model.auto.CourseSt"
+            useGeneratedKeys="true" keyProperty="stId">
+    insert into c_course_st (st_name)
+    values (#{stName,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="club.wadreamer.cloudlearning.model.auto.CourseSt">
+        insert into c_course_st
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="stId != null">
+                st_id,
+            </if>
+            <if test="stName != null">
+                st_name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="stId != null">
+                #{stId,jdbcType=INTEGER},
+            </if>
+            <if test="stName != null">
+                #{stName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="club.wadreamer.cloudlearning.model.auto.CourseSt">
+        update c_course_st
+        <set>
+            <if test="stName != null">
+                st_name = #{stName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where st_id = #{stId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="club.wadreamer.cloudlearning.model.auto.CourseSt">
+    update c_course_st
+    set st_name = #{stName,jdbcType=VARCHAR}
+    where st_id = #{stId,jdbcType=INTEGER}
+  </update>
+
+    <select id="getList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from c_course_st
+    </select>
+</mapper>

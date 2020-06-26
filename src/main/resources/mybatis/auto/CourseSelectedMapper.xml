@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.wadreamer.cloudlearning.mapper.auto.CourseSelectedMapper">
+    <resultMap id="BaseResultMap" type="club.wadreamer.cloudlearning.model.auto.CourseSelected">
+        <id column="sid" jdbcType="INTEGER" property="sid"/>
+        <result column="uid" jdbcType="VARCHAR" property="uid"/>
+        <result column="cid" jdbcType="INTEGER" property="cid"/>
+        <result column="cname" jdbcType="VARCHAR" property="cname"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    sid, uid, cid, cname
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from c_course_selected
+        where sid = #{sid,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from c_course_selected
+    where sid = #{sid,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="club.wadreamer.cloudlearning.model.auto.CourseSelected">
+    insert into c_course_selected (uid, cid,
+      cname)
+    values (#{uid,jdbcType=VARCHAR}, #{cid,jdbcType=INTEGER},
+      #{cname,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="club.wadreamer.cloudlearning.model.auto.CourseSelected"
+            useGeneratedKeys="true">
+        insert into c_course_selected
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sid != null">
+                sid,
+            </if>
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="cid != null">
+                cid,
+            </if>
+            <if test="cname != null">
+                cname,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sid != null">
+                #{sid,jdbcType=INTEGER},
+            </if>
+            <if test="uid != null">
+                #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="cid != null">
+                #{cid,jdbcType=INTEGER},
+            </if>
+            <if test="cname != null">
+                #{cname,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="club.wadreamer.cloudlearning.model.auto.CourseSelected">
+        update c_course_selected
+        <set>
+            <if test="uid != null">
+                uid = #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="cid != null">
+                cid = #{cid,jdbcType=INTEGER},
+            </if>
+            <if test="cname != null">
+                cname = #{cname,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where sid = #{sid,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="club.wadreamer.cloudlearning.model.auto.CourseSelected">
+    update c_course_selected
+    set uid = #{uid,jdbcType=VARCHAR},
+      cid = #{cid,jdbcType=INTEGER},
+      cname = #{cname,jdbcType=VARCHAR}
+    where sid = #{sid,jdbcType=INTEGER}
+  </update>
+
+    <resultMap id="CourseSelectedMap" type="club.wadreamer.cloudlearning.model.auto.CourseSelected">
+        <id column="sid" jdbcType="INTEGER" property="sid"/>
+        <result column="uid" jdbcType="VARCHAR" property="uid"/>
+        <result column="cid" jdbcType="INTEGER" property="cid"/>
+        <result column="cname" jdbcType="VARCHAR" property="cname"/>
+        <result column="username" jdbcType="VARCHAR" property="teacher"/>
+    </resultMap>
+    <select id="getCourseSelectedList" parameterType="java.lang.String" resultMap="CourseSelectedMap">
+        select
+        cs.sid, cs.uid, cs.cid, cs.cname, c.username
+        from c_course_selected cs, c_course c
+        where cs.uid = #{uid} and cs.cid = c.cid
+    </select>
+
+
+</mapper>

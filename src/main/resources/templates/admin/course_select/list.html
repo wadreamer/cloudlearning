@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${projectName}"></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,admin-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" th:href="@{/static/layui/css/xadmin.css}">
+    <script type="text/javascript" th:src="@{/static/layui/lib/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/static/layui/js/xadmin.js}"></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">课程列表</div>
+                <div class="layui-card-body ">
+                    <table class="layui-table" lay-filter="toolBar" id="list"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-warm layui-btn-radius" lay-event="detail">详情</a>
+    <a class="layui-btn layui-btn-danger layui-btn-radius" lay-event="select">订阅</a>
+</script>
+
+<script type="text/javascript" th:inline="javascript">
+    function createrFormat(o) {
+        return o;
+    }
+
+    window.rootPath = [[${rootPath}]];
+    layui.use(['table', 'laypage', 'form', 'layer'], function () {
+        var table = layui.table,
+            form = layui.form,
+            layer = layui.layer;
+
+        //js渲染表格
+        table.render({
+            elem: '#list',
+            url: rootPath + '/CourseSelectController/all_course_list',
+            toolbar: true,
+            page: true,
+            limits: [5, 10, 15],
+            limit: 5,
+            groups: 3,
+            cols: [
+                [ //标题栏
+                    {
+                        templet: '<div>{{createrFormat(d.cid)}}</div>',
+                        title: 'ID',
+                        sort: true,
+                        fixed: true
+                    },
+                    {templet: '<div>{{createrFormat(d.stName)}}</div>', title: '一级类名'},
+                    {templet: '<div>{{createrFormat(d.ndName)}}</div>', title: '二级类名'},
+                    {templet: '<div>{{createrFormat(d.cname)}}</div>', title: '课程名'},
+                    {templet: '<div>{{createrFormat(d.courseDescription)}}</div>', title: '课程描述'},
+                    {templet: '<div>{{createrFormat(d.username)}}</div>', title: '授课教师'},
+                    {fixed: 'right', width: 216, align: 'center', toolbar: '#barDemo'}
+                ]
+            ]
+        });
+
+        //监听工具条
+        table.on('tool(toolBar)', function (obj) {
+            var data = obj.data;
+            var cid = data.cid;
+            var cname = data.cname;
+            if (obj.event === 'detail') {
+                var detail_view = layer.open({
+                    type: 2,
+                    title: '课程详情',
+                    content: rootPath + "/CourseSelectController/course_selected_detail?cid=" + cid, //这里content是一个普通的String
+                    maxmin: true
+                });
+                layer.full(detail_view);
+
+            }else if (obj.event === 'select') {
+                layer.confirm('确定订阅吗？', function (obj) {
+                    $.ajax({
+                        type: 'POST',
+                        url: rootPath + '/CourseSelectController/course_select',
+                        data: {cid: cid, cname: cname},
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.code == 200) {
+                                layer.msg(res.msg, {icon: 6, time: 2000});
+                                table.reload('list', {
+                                    url: rootPath + '/CourseSelectController/all_course_list'
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 5, time: 2000});
+                            }
+                        },
+                        error: function (res) {
+                            layer.msg(res.msg, {icon: 5, time: 2000});
+                        }
+                    })
+                });
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

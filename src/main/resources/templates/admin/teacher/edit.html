@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${projectName}"></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,admin-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" th:href="@{/static/layui/css/xadmin.css}">
+    <link rel="stylesheet" th:href="@{/static/layui/css/font.css}">
+    <script type="text/javascript" th:src="@{/static/layui/lib/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/static/layui/js/xadmin.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/jquery-2.2.3.min.js}"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form layui-form-pane">
+
+                        <div class="layui-form-item" style="text-align: center;">
+                            <img class="layui-nav-img-update" name="image" id="image" style="margin-right: 10px;"
+                                 th:attr="lay-src='../static' + ${user.avatarPath},
+                                 src='../static' + ${user.avatarPath}"/>
+                            <button type="button" class="layui-btn" id="upload">选择头像</button>
+                        </div>
+
+                        <hr class="layui-bg-green" style="margin-top: 10px;margin-bottom: 20px;">
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">用户名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="username" autocomplete="off"
+                                       class="layui-input layui-disabled" th:value="${user.username}">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">密码</label>
+                            <div class="layui-input-inline" style="width: 35%;">
+                                <input type="password" name="password" lay-verify="password" placeholder="请输入"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+
+                            <label class="layui-form-label">确认密码</label>
+                            <div class="layui-input-inline" style="width: 35%;">
+                                <input type="password" name="firm_password" lay-verify="firm_password" placeholder="请输入"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">真实姓名</label>
+                            <div class="layui-input-inline" style="width: 35%;">
+                                <input type="text" name="realname" lay-verify="realname" placeholder="请输入"
+                                       th:value="${user.realname}"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                            <label class="layui-form-label">邮箱</label>
+                            <div class="layui-input-inline" style="width: 35%;">
+                                <input type="text" name="email" lay-verify="required|email" placeholder="请输入"
+                                       th:value="${user.email}"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">联系方式</label>
+                            <div class="layui-input-inline" style="width: 35%;">
+                                <input type="text" name="phone" lay-verify="required|phone" placeholder="请输入"
+                                       th:value="${user.phone}"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">籍贯</label>
+                            <div class="layui-input-inline">
+                                <select name="province" id="province" lay-filter="province" lay-verify="province">
+                                    <option value="">请选择...</option>
+                                    <option th:each="p,pStat : ${provinces}"
+                                            th:attr="id=${p.provinceid}"
+                                            th:value="${p.province}"
+                                            th:text="${p.province}"
+                                            th:selected="${user.province == p.province}"></option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <select name="city" id="city" lay-filter="city" lay-verify="city">
+                                    <option value="">请选择...</option>
+                                    <option th:value="${user.city}" th:text="${user.city}"
+                                            selected="selected"></option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <select name="area" id="area" lay-verify="area">
+                                    <option value="">请选择...</option>
+                                    <option th:value="${user.area}" th:text="${user.area}"
+                                            selected="selected"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item" pane="">
+                            <label class="layui-form-label">性别</label>
+                            <div class="layui-input-block" id="selectGender">
+                                <input type="radio" name="sex" value="男" title="男"
+                                       th:checked="${user.sex eq '男'}">
+                                <input type="radio" name="sex" value="女" title="女"
+                                       th:checked="${user.sex eq '女'}">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button type="submit" id="insert" class="layui-btn" lay-submit="">提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div th:replace="dialog_success :: html"></div>-->
+<script type="text/javascript" th:inline="javascript">
+    window.rootPath = [[${rootPath}]];
+
+    layui.use(['form', 'layer', 'upload', 'flow'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            upload = layui.upload,
+            flow = layui.flow;
+
+        var isUpload = false;
+        var uid = [[${user.uid}]]
+        flow.lazyimg();
+
+        //自定义验证规则
+        form.verify({
+            username: function (value) { //value：表单的值、item：表单的DOM对象
+                if (value == "") {
+                    return "用户名不能为空";
+                }
+                if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                    return '用户名不能有特殊字符';
+                }
+                if (/(^\_)|(\__)|(\_+$)/.test(value)) {
+                    return '用户名首尾不能出现下划线\'_\'';
+                }
+                if (/^\d+\d+\d$/.test(value)) {
+                    return '用户名不能全为数字';
+                }
+            },
+            password: function (value) {
+                if (value != "" && !/^[\S]{6,12}$/.test(value)) {
+                    return '密码需为6至12位，且不能出现空格';
+                }
+            },
+            firm_password: function (value) {
+                var password = $('input[name=password]').val();
+                if (password != "" && value != password) {
+                    return "两次输入的密码不一致，请重新输入";
+                }
+            },
+            realname: function (value) {
+                if (value == "") {
+                    return "真实姓名不能为空";
+                }
+            },
+            province: function (value) {
+                if (value == "") {
+                    return "请选择籍贯的省份";
+                }
+            },
+            city: function (value) {
+                if (value == "") {
+                    return "请选择籍贯的地级市";
+                }
+            },
+            area: function (value) {
+                if (value == "") {
+                    return "请选择籍贯的地方";
+                }
+            }
+        });
+
+        form.on('select(province)', function (data) {
+            var prov_id = $("#province").find("option:selected").attr("id");
+            // console.log(data);
+            // console.log(prov_id);
+            $.ajax({
+                type: "post",
+                url: rootPath + "/HometownController/getCities?provinceId=" + prov_id,
+                dataType: "json",
+                async: true,
+                success: function (result) {
+                    var citylist = result.data;
+                    // console.log(citylist);
+                    var str = ''
+                    for (var i = 0; i < citylist.length; i++) {
+                        str += "<option value='" + citylist[i].city + "' id= '" + citylist[i].cityid + "'>" + citylist[i].city + "</option>"
+                    }
+                    // console.log(str);
+                    $("#city").html(str);
+                    form.render("select");//重新加载
+                },
+                error: function () {
+                    console.log("获取城市失败");
+                }
+            });
+        });
+
+        form.on('select(city)', function (data) {
+            var city_id = $("#city").find("option:selected").attr('id');
+            // console.log(data);
+            // console.log(city_id);
+            $.ajax({
+                type: "post",
+                url: rootPath + "/HometownController/getAreas?cityId=" + city_id,
+                dataType: "json",
+                async: true,
+                success: function (result) {
+                    var areaList = result.data;
+                    //console.log(citylist);
+                    var str = ''
+                    for (var i = 0; i < areaList.length; i++) {
+                        str += "<option value='" + areaList[i].area + "' id= '" + areaList[i].areaid + "'>" + areaList[i].area + "</option>"
+                    }
+                    $("#area").html(str);
+                    form.render("select");
+                },
+                error: function () {
+                    console.log("获取地方失败");
+                }
+            });
+        });
+
+        //监听提交
+        form.on('submit', function (data) {
+            if (!isUpload) {
+                console.log(data.field);
+                $.ajax({
+                    async: false,
+                    url: rootPath + '/TeacherController/teacher_edit',
+                    data: {
+                        uid: uid,
+                        username: $('input[name="username"]').val(),
+                        password: $('input[name="password"]').val(),
+                        realname: $('input[name="realname"]').val(),
+                        email: $('input[name="email"]').val(),
+                        phone: $('input[name="phone"]').val(),
+                        sex: $('#selectGender input[name="sex"]:checked').val(),
+                        province: $('select[name="province"]').val(),
+                        city: $('select[name="city"]').val(),
+                        area: $('select[name="area"]').val(),
+                        isUpload: isUpload,
+                        image: ""
+                    },
+                    type: "post",
+                    success: function (obj) {
+                        if (obj.code == 200) {
+                            layer.alert("修改成功", {icon: 6}, function () {
+                                // 获得frame索引
+                                var index = parent.layer.getFrameIndex(window.name);
+                                //关闭当前frame
+                                parent.layer.close(index);
+                                //修改成功后刷新父界面
+                                window.parent.location.reload();
+                            });
+                        } else {
+                            layer.msg(obj.msg, {icon: 5, time: 1000});
+                        }
+                    }
+                });
+            }
+            return false;
+        });
+
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#upload',
+            field: 'image',//传到后台的参数名
+            url: rootPath + '/TeacherController/teacher_edit',
+            exts: 'jpg|png|jpeg',
+            size: 2048,//图片不大于2MB,
+            auto: false, //表示不自动上传
+            bindAction: '#insert', //指定和谁一起上传
+            choose: function (obj) {
+                obj.preview(function (index, file, result) {//index索引 file 文件名.后缀  result 图片数据
+                    $('#image').attr('src', result);
+                });
+                isUpload = true;
+            },
+            before: function (obj) { //图片预览事件
+                this.data = {
+                    uid: uid,
+                    username: $('input[name="username"]').val(),
+                    password: $('input[name="password"]').val(),
+                    realname: $('input[name="realname"]').val(),
+                    email: $('input[name="email"]').val(),
+                    phone: $('input[name="phone"]').val(),
+                    sex: $('#selectGender input[name="sex"]:checked').val(),
+                    province: $('select[name="province"]').val(),
+                    city: $('select[name="city"]').val(),
+                    area: $('select[name="area"]').val(),
+                    isUpload: isUpload
+                };
+                console.log(this.data);
+                layer.load();
+            },
+            done: function (res) { //上传成功发生成的事件
+                layer.closeAll('loading');
+                if (res.code == 200) {
+                    layer.alert("修改成功", {icon: 6}, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                        //修改成功后刷新父界面
+                        window.parent.location.reload();
+                    });
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 2000});
+                }
+            },
+            error: function () {//上传失败的事件
+                layer.closeAll('loading');
+                layer.alert('上传失败，请重试！');
+            }
+        });
+    });
+</script>
+</body>
+</html>

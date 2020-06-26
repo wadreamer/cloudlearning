@@ -1,0 +1,76 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="leftMenu">
+    <!-- 左边菜单 -->
+    <div id="skin-select">
+        <!-- PC端 LOGO -->
+        <div id="logo">
+            <h4 th:text="${projectName}" style="text-align: center">Springboot<span>v2</span></h4>
+        </div>
+        <!--END PC端 LOGO -->
+
+        <!--点击隐藏左边菜单栏按钮 -->
+        <a id="toggle">
+            <span class="entypo-menu"></span>
+        </a>
+        <!--END点击隐藏左边菜单栏按钮 -->
+        <!-- PC端搜索按钮 -->
+        <div class="dark">
+            <form action="#">
+	            <span>
+					<input type="text" name="search" value="" class="search rounded id_search" placeholder="菜单搜索"
+                           autofocus/>
+	            </span>
+            </form>
+        </div>
+        <!-- 手机端搜索按钮  有bug-->
+        <div class="search-hover">
+            <form id="demo-2">
+                <input type="search" placeholder="Search4 Menu..." class="id_search">
+            </form>
+        </div>
+
+
+        <!-- 左侧菜单栏 -->
+        <div class="skin-part">
+            <div id="tree-wrap">
+                <div class="side-bar">
+                    <ul class="topnav menu-left-nest" th:each="catalog,catalogStat:${session.bootstrapTree.nodes}">
+
+                        <!--catalog:目录-->
+                        <li th:if="${catalog.visible == 0}">
+                            <a th:if="${catalog.isBlank==0}" class="tooltip-tip" th:href="@{${catalog.url}}"
+                               target="mainFrame" th:title="${catalog.name}">
+                                <i th:classappend="${catalog.icon}" class=""></i>
+                                <span th:text="${catalog.name}">用户管理</span>
+                            </a>
+                            <a th:if="${catalog.isBlank==1}" class="tooltip-tip" th:href="@{${catalog.url}}"
+                               target="_blank" th:title="${catalog.name}">
+                                <i th:classappend="${catalog.icon}" class=""></i>
+                                <span th:text="${catalog.name}">用户管理</span>
+                            </a>
+                            <!--菜单-->
+                            <ul>
+                                <li th:each="menus,menusStat:${catalog.nodes}" th:if="${menus.visible == 0}">
+                                    <!--不跳转-->
+                                    <a th:if="${menus.isBlank==0 && menus.visible == 0}" class="tooltip-tip"
+                                       th:href="@{${menus.url}}" target="mainFrame" th:title="${menus.name}">
+                                        <i th:classappend="${menus.icon}" class=""></i>
+                                        <span th:text="${menus.name}">用户管理</span>
+                                    </a>
+                                    <!--跳转-->
+                                    <a th:if="${menus.isBlank==1}" class="tooltip-tip" th:href="@{${menus.url}}"
+                                       target="_blank" th:title="${menus.text}">
+                                        <i th:classappend="${menus.icon}" class=""></i>
+                                        <span th:text="${menus.text}">用户管理</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- 左侧菜单栏 -->
+    </div>
+    <!-- 结束左边菜单栏 -->
+</div>

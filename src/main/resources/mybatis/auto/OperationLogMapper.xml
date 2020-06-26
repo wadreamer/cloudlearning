@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.wadreamer.cloudlearning.mapper.auto.OperationLogMapper">
+  <resultMap id="BaseResultMap" type="club.wadreamer.cloudlearning.model.auto.OperationLog">
+    <id column="oid" jdbcType="INTEGER" property="oid" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="method" jdbcType="VARCHAR" property="method" />
+    <result column="oper_name" jdbcType="VARCHAR" property="operName" />
+    <result column="oper_url" jdbcType="VARCHAR" property="operUrl" />
+    <result column="oper_param" jdbcType="VARCHAR" property="operParam" />
+    <result column="error_msg" jdbcType="VARCHAR" property="errorMsg" />
+    <result column="oper_time" jdbcType="DATE" property="operTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    oid, title, method, oper_name, oper_url, oper_param, error_msg, oper_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from c_oper_log
+    where oid = #{oid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from c_oper_log
+    where oid = #{oid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="club.wadreamer.cloudlearning.model.auto.OperationLog">
+    insert into c_oper_log (oid, title, method, 
+      oper_name, oper_url, oper_param, 
+      error_msg, oper_time)
+    values (#{oid,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{method,jdbcType=VARCHAR}, 
+      #{operName,jdbcType=VARCHAR}, #{operUrl,jdbcType=VARCHAR}, #{operParam,jdbcType=VARCHAR}, 
+      #{errorMsg,jdbcType=VARCHAR}, #{operTime,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="club.wadreamer.cloudlearning.model.auto.OperationLog">
+    insert into c_oper_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="oid != null">
+        oid,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="method != null">
+        method,
+      </if>
+      <if test="operName != null">
+        oper_name,
+      </if>
+      <if test="operUrl != null">
+        oper_url,
+      </if>
+      <if test="operParam != null">
+        oper_param,
+      </if>
+      <if test="errorMsg != null">
+        error_msg,
+      </if>
+      <if test="operTime != null">
+        oper_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="oid != null">
+        #{oid,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="method != null">
+        #{method,jdbcType=VARCHAR},
+      </if>
+      <if test="operName != null">
+        #{operName,jdbcType=VARCHAR},
+      </if>
+      <if test="operUrl != null">
+        #{operUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="operParam != null">
+        #{operParam,jdbcType=VARCHAR},
+      </if>
+      <if test="errorMsg != null">
+        #{errorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="operTime != null">
+        #{operTime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="club.wadreamer.cloudlearning.model.auto.OperationLog">
+    update c_oper_log
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="method != null">
+        method = #{method,jdbcType=VARCHAR},
+      </if>
+      <if test="operName != null">
+        oper_name = #{operName,jdbcType=VARCHAR},
+      </if>
+      <if test="operUrl != null">
+        oper_url = #{operUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="operParam != null">
+        oper_param = #{operParam,jdbcType=VARCHAR},
+      </if>
+      <if test="errorMsg != null">
+        error_msg = #{errorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="operTime != null">
+        oper_time = #{operTime,jdbcType=DATE},
+      </if>
+    </set>
+    where oid = #{oid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="club.wadreamer.cloudlearning.model.auto.OperationLog">
+    update c_oper_log
+    set title = #{title,jdbcType=VARCHAR},
+      method = #{method,jdbcType=VARCHAR},
+      oper_name = #{operName,jdbcType=VARCHAR},
+      oper_url = #{operUrl,jdbcType=VARCHAR},
+      oper_param = #{operParam,jdbcType=VARCHAR},
+      error_msg = #{errorMsg,jdbcType=VARCHAR},
+      oper_time = #{operTime,jdbcType=DATE}
+    where oid = #{oid,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${projectName}"></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,admin-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" th:href="@{/static/layui/css/xadmin.css}">
+    <script type="text/javascript" th:src="@{/static/layui/lib/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/static/layui/js/xadmin.js}"></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">待审核列表</div>
+                <div class="layui-card-body ">
+                    <table class="layui-table" lay-filter="toolBar" id="list"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-normal  layui-btn-radius" lay-event="review">审核</a>
+</script>
+
+<script type="text/javascript" th:inline="javascript">
+    function createrFormat(o) {
+        return o;
+    }
+
+    window.rootPath = [[${rootPath}]];
+    layui.use(['table', 'laypage', 'form', 'layer'], function () {
+        var table = layui.table,
+            form = layui.form,
+            layer = layui.layer;
+
+        //js渲染表格
+        table.render({
+            elem: '#list',
+            url: rootPath + '/CourseReviewController/course_unreview_list',
+            toolbar: true,
+            page: true,
+            limits: [5, 10, 15],
+            limit: 5,
+            groups: 3,
+            cols: [
+                [ //标题栏
+                    {
+                        templet: '<div>{{createrFormat(d.cid)}}</div>',
+                        title: 'ID',
+                        sort: true,
+                        fixed: true
+                    },
+                    {templet: '<div>{{createrFormat(d.stName)}}</div>', title: '一级类名'},
+                    {templet: '<div>{{createrFormat(d.ndName)}}</div>', title: '二级类名'},
+                    {templet: '<div>{{createrFormat(d.cname)}}</div>', title: '课程名'},
+                    {templet: '<div>{{createrFormat(d.courseDescription)}}</div>', title: '课程描述'},
+                    {fixed: 'right', width: 216, align: 'center', toolbar: '#barDemo'}
+                ]
+            ]
+        });
+
+        //监听工具条
+        table.on('tool(toolBar)', function (obj) {
+            var data = obj.data;
+            var cid = data.cid;
+            if (obj.event === 'review') {
+                var review = layer.open({
+                    type: 2,
+                    title: '审核课程',
+                    content: rootPath + "/CourseReviewController/course_review_view?cid=" + cid, //这里content是一个普通的String
+                    maxmin: true
+                });
+                layer.full(review);
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${projectName}"></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,admin-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" th:href="@{/static/layui/css/font.css}">
+    <link rel="stylesheet" th:href="@{/static/layui/css/xadmin.css}">
+</head>
+<body>
+<table class="layui-table" style="text-align: center">
+    <form class="layui-form layui-form-pane">
+        <tr>
+            <td><h3>ID</h3></td>
+            <td><h3 th:text="${notice.nid}"></h3></td>
+        </tr>
+        <tr>
+            <td><h3>所属课程</h3></td>
+            <td><h3 th:text="${notice.cname}"></h3></td>
+        </tr>
+
+        <tr>
+            <td><h3>公告主题</h3></td>
+            <td><h3 th:text="${notice.topic}"></h3></td>
+        </tr>
+
+        <tr>
+            <td><h3>公告内容</h3></td>
+            <td><h3 th:text="${notice.content}"></h3></td>
+        </tr>
+
+        <tr>
+            <td><h3>公告发布时间</h3></td>
+            <td><h3 th:text="${notice.publishDate}"></h3></td>
+        </tr>
+    </form>
+</table>
+</body>
+</html>

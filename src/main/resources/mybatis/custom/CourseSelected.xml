@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.wadreamer.cloudlearning.mapper.custom.CourseSelectedDao">
+    <resultMap id="BaseResultMap" type="club.wadreamer.cloudlearning.model.custom.CourseSelected">
+        <id column="sid" jdbcType="INTEGER" property="sid"/>
+        <result column="uid" jdbcType="VARCHAR" property="uid"/>
+        <result column="cid" jdbcType="INTEGER" property="cid"/>
+        <result column="cname" jdbcType="VARCHAR" property="cname"/>
+        <result column="course_description" jdbcType="VARCHAR" property="courseDescription"/>
+        <result column="img_path" jdbcType="VARCHAR" property="imgPath"/>
+        <result column="username" jdbcType="VARCHAR" property="teacher"/>
+    </resultMap>
+    <select id="getCourseSelectByUid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        cs.sid, cs.uid, cs.cid, cs.cname, c.username, c.course_description, c.img_path
+        from c_course_selected cs, c_course c
+        where cs.uid = #{uid} and cs.cid = c.cid
+    </select>
+
+    <select id="getAllCourseSelectedByCid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        cs.sid, cs.uid, cs.cid, cs.cname, c.username, c.course_description, c.img_path
+        from c_course_selected cs, c_course c
+        where cs.cid = #{cid} and cs.cid = c.cid
+    </select>
+
+    <resultMap id="ChapterAndVideos" type="club.wadreamer.cloudlearning.model.custom.ChapterAndVideo">
+        <result column="chapter" jdbcType="VARCHAR" property="chapter"/>
+        <association property="videos" column="chapter_id" select="getAllVideosByCid"/>
+    </resultMap>
+
+    <resultMap id="Videos" type="club.wadreamer.cloudlearning.model.auto.Video">
+        <id column="vid" jdbcType="INTEGER" property="vid"/>
+        <result column="uid" jdbcType="VARCHAR" property="uid"/>
+        <result column="cid" jdbcType="INTEGER" property="cid"/>
+        <result column="chapter_id" jdbcType="INTEGER" property="chapterId"/>
+        <result column="video_path" jdbcType="VARCHAR" property="videoPath"/>
+        <result column="video_description" jdbcType="VARCHAR" property="videoDescription"/>
+        <result column="upload_date" jdbcType="TIMESTAMP" property="uploadDate"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+    </resultMap>
+
+    <select id="getChapterAndVideosList" parameterType="java.lang.Integer" resultMap="ChapterAndVideos">
+        select
+        cid, chapter, chapter_id, order_num
+        from c_chapter
+        where cid = #{cid}
+        order by order_num
+    </select>
+
+    <select id="getAllVideosByCid" parameterType="java.lang.Integer" resultMap="Videos">
+        select
+        vid, uid, cid, chapter_id, video_path, video_description, upload_date, order_num
+        from c_video
+        where chapter_id = #{chapter_id}
+        order by order_num
+    </select>
+
+    <resultMap id="CourseInfo" type="club.wadreamer.cloudlearning.model.custom.CourseWithChapterAndVideo">
+        <result column="cname" jdbcType="VARCHAR" property="cname"/>
+        <result column="img_path" jdbcType="VARCHAR" property="imgPath"/>
+        <result column="username" jdbcType="VARCHAR" property="teacher"/>
+    </resultMap>
+
+    <select id="getCourseInfoByCid" parameterType="java.lang.Integer" resultMap="CourseInfo">
+        select
+        cname, img_path, username
+        from c_course
+        where cid = #{cid}
+    </select>
+
+</mapper>

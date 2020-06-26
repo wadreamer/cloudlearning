@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.wadreamer.cloudlearning.mapper.auto.CourseMapper">
+    <resultMap id="BaseResultMap" type="club.wadreamer.cloudlearning.model.auto.Course">
+        <id column="cid" jdbcType="INTEGER" property="cid"/>
+        <result column="uid" jdbcType="VARCHAR" property="uid"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="st_id" jdbcType="INTEGER" property="stId"/>
+        <result column="nd_id" jdbcType="INTEGER" property="ndId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="course_description" jdbcType="VARCHAR" property="courseDescription"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    cid, uid, username, st_id, nd_id, cname, course_description
+  </sql>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from c_course
+    where cid = #{cid,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="club.wadreamer.cloudlearning.model.auto.Course">
+    insert into c_course (cid, uid, username, 
+      st_id, nd_id, name, course_description
+      )
+    values (#{cid,jdbcType=INTEGER}, #{uid,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
+      #{stId,jdbcType=INTEGER}, #{ndId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{courseDescription,jdbcType=VARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="club.wadreamer.cloudlearning.model.auto.Course"
+            useGeneratedKeys="true">
+        insert into c_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cid != null">
+                cid,
+            </if>
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="stId != null">
+                st_id,
+            </if>
+            <if test="ndId != null">
+                nd_id,
+            </if>
+            <if test="cname != null">
+                cname,
+            </if>
+            <if test="courseDescription != null">
+                course_description,
+            </if>
+            <if test="imgPath != null">
+                img_path,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cid != null">
+                #{cid,jdbcType=INTEGER},
+            </if>
+            <if test="uid != null">
+                #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="stId != null">
+                #{stId,jdbcType=INTEGER},
+            </if>
+            <if test="ndId != null">
+                #{ndId,jdbcType=INTEGER},
+            </if>
+            <if test="cname != null">
+                #{cname,jdbcType=VARCHAR},
+            </if>
+            <if test="courseDescription != null">
+                #{courseDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="imgPath != null">
+                #{imgPath,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="club.wadreamer.cloudlearning.model.auto.Course">
+        update c_course
+        <set>
+            <if test="uid != null">
+                uid = #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="stId != null">
+                st_id = #{stId,jdbcType=INTEGER},
+            </if>
+            <if test="ndId != null">
+                nd_id = #{ndId,jdbcType=INTEGER},
+            </if>
+            <if test="cname != null">
+                cname = #{cname,jdbcType=VARCHAR},
+            </if>
+            <if test="courseDescription != null">
+                course_description = #{courseDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="imgPath != null">
+                img_path = #{imgPath,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where cid = #{cid,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="club.wadreamer.cloudlearning.model.auto.Course">
+    update c_course
+    set uid = #{uid,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      st_id = #{stId,jdbcType=INTEGER},
+      nd_id = #{ndId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      course_description = #{courseDescription,jdbcType=VARCHAR}
+    where cid = #{cid,jdbcType=INTEGER}
+  </update>
+
+    <resultMap id="CourseMap" type="club.wadreamer.cloudlearning.model.auto.Course">
+        <id column="cid" jdbcType="INTEGER" property="cid"/>
+        <result column="uid" jdbcType="VARCHAR" property="uid"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="st_id" jdbcType="INTEGER" property="stId"/>
+        <result column="st_name" jdbcType="VARCHAR" property="stName"/>
+        <result column="nd_id" jdbcType="INTEGER" property="ndId"/>
+        <result column="nd_name" jdbcType="VARCHAR" property="ndName"/>
+        <result column="cname" jdbcType="VARCHAR" property="cname"/>
+        <result column="pass" jdbcType="INTEGER" property="pass"/>
+        <result column="course_description" jdbcType="VARCHAR" property="courseDescription"/>
+        <result column="img_path" jdbcType="VARCHAR" property="imgPath"/>
+        <result column="advice" jdbcType="VARCHAR" property="advice"/>
+    </resultMap>
+
+    <select id="getCourseListByUserId" parameterType="java.lang.String" resultMap="CourseMap">
+        select
+        c.cid, c.uid, c.username, c.st_id, cst.st_name, c.nd_id, cnd.nd_name, c.cname,c.pass, c.course_description,
+        c.img_path, c.advice
+        from c_course c, c_course_st cst, c_course_nd cnd
+        where c.st_id = cst.st_id and c.nd_id = cnd.nd_id and c.uid = #{uid}
+    </select>
+
+    <select id="getCoursePassList" parameterType="java.lang.String" resultMap="CourseMap">
+        select
+        c.cid, c.uid, c.username, c.st_id, cst.st_name, c.nd_id, cnd.nd_name, c.cname, c.pass, c.course_description,
+        c.advice
+        from c_course c, c_course_st cst, c_course_nd cnd
+        where c.st_id = cst.st_id and c.nd_id = cnd.nd_id and c.uid = #{uid} and c.pass = 2
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="CourseMap">
+        select
+        c.cid, c.uid, c.username, c.st_id, cst.st_name, c.nd_id, cnd.nd_name, c.cname, c.course_description, c.img_path
+        from c_course c, c_course_st cst, c_course_nd cnd
+        where c.st_id = cst.st_id and c.nd_id = cnd.nd_id and cid = #{cid,jdbcType=INTEGER}
+    </select>
+
+    <update id="updatePassByKey" parameterType="club.wadreamer.cloudlearning.model.auto.ReviewLog">
+        update c_course
+        set
+        pass = #{pass,jdbcType=INTEGER},
+        advice = #{advice,jdbcType=VARCHAR}
+        where cid = #{cid,jdbcType=INTEGER}
+    </update>
+
+    <select id="getAllCourseListForSelect" resultMap="CourseMap" parameterType="java.lang.String">
+        select
+        c.cid, c.uid, c.username, c.st_id, cst.st_name, c.nd_id, cnd.nd_name, c.cname, c.course_description,
+        c.img_path
+        from c_course c, c_course_st cst, c_course_nd cnd
+        where c.st_id = cst.st_id and c.nd_id = cnd.nd_id and c.pass = 2
+        and c.cid not in (
+            select cs.cid from c_course_selected cs where cs.uid = #{uid}
+        )
+    </select>
+
+    <select id="checkIsMoreCourseBystId" resultMap="CourseMap" parameterType="java.lang.Integer">
+        select c.cid
+        from c_course c
+        where c.st_id = #{stId}
+    </select>
+
+    <select id="checkIsMoreCourseByndId" resultMap="CourseMap" parameterType="java.lang.Integer">
+        select c.cid
+        from c_course c
+        where c.nd_id = #{ndId}
+    </select>
+
+
+</mapper>

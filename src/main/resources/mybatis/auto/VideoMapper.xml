@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.wadreamer.cloudlearning.mapper.auto.VideoMapper">
+    <resultMap id="BaseResultMap" type="club.wadreamer.cloudlearning.model.auto.Video">
+    <id column="vid" jdbcType="INTEGER" property="vid"/>
+    <result column="uid" jdbcType="VARCHAR" property="uid"/>
+    <result column="cid" jdbcType="INTEGER" property="cid"/>
+    <result column="chapter_id" jdbcType="INTEGER" property="chapterId"/>
+    <result column="video_path" jdbcType="VARCHAR" property="videoPath"/>
+    <result column="video_description" jdbcType="VARCHAR" property="videoDescription"/>
+    <result column="upload_date" jdbcType="TIMESTAMP" property="uploadDate"/>
+    <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+</resultMap>
+    <sql id="Base_Column_List">
+    vid, uid, cid, chapter_id, video_path, video_description, upload_date, order_num
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from c_video
+        where vid = #{vid,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from c_video
+    where vid = #{vid,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="club.wadreamer.cloudlearning.model.auto.Video">
+    insert into c_video (vid, uid, cid, 
+      chapter_id, video_path, video_description, 
+      upload_date)
+    values (#{vid,jdbcType=INTEGER}, #{uid,jdbcType=VARCHAR}, #{cid,jdbcType=INTEGER}, 
+      #{chapterId,jdbcType=INTEGER}, #{videoPath,jdbcType=VARCHAR}, #{videoDescription,jdbcType=VARCHAR}, 
+      #{uploadDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="club.wadreamer.cloudlearning.model.auto.Video"
+            useGeneratedKeys="true">
+        insert into c_video
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vid != null">
+                vid,
+            </if>
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="cid != null">
+                cid,
+            </if>
+            <if test="chapterId != null">
+                chapter_id,
+            </if>
+            <if test="videoPath != null">
+                video_path,
+            </if>
+            <if test="videoDescription != null">
+                video_description,
+            </if>
+            <if test="uploadDate != null">
+                upload_date,
+            </if>
+            <if test="orderNum != null">
+                order_num,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vid != null">
+                #{vid,jdbcType=INTEGER},
+            </if>
+            <if test="uid != null">
+                #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="cid != null">
+                #{cid,jdbcType=INTEGER},
+            </if>
+            <if test="chapterId != null">
+                #{chapterId,jdbcType=INTEGER},
+            </if>
+            <if test="videoPath != null">
+                #{videoPath,jdbcType=VARCHAR},
+            </if>
+            <if test="videoDescription != null">
+                #{videoDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadDate != null">
+                #{uploadDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="orderNum != null">
+                #{orderNum,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="club.wadreamer.cloudlearning.model.auto.Video">
+        update c_video
+        <set>
+            <if test="uid != null">
+                uid = #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="cid != null">
+                cid = #{cid,jdbcType=INTEGER},
+            </if>
+            <if test="chapterId != null">
+                chapter_id = #{chapterId,jdbcType=INTEGER},
+            </if>
+            <if test="videoPath != null">
+                video_path = #{videoPath,jdbcType=VARCHAR},
+            </if>
+            <if test="videoDescription != null">
+                video_description = #{videoDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadDate != null">
+                upload_date = #{uploadDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where vid = #{vid,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="club.wadreamer.cloudlearning.model.auto.Video">
+    update c_video
+    set uid = #{uid,jdbcType=VARCHAR},
+      cid = #{cid,jdbcType=INTEGER},
+      chapter_id = #{chapterId,jdbcType=INTEGER},
+      video_path = #{videoPath,jdbcType=VARCHAR},
+      video_description = #{videoDescription,jdbcType=VARCHAR},
+      upload_date = #{uploadDate,jdbcType=TIMESTAMP}
+    where vid = #{vid,jdbcType=INTEGER}
+  </update>
+
+    <select id="checkIsMoreVideos" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from c_video
+        where chapter_id = #{chapterId,jdbcType=INTEGER}
+    </select>
+</mapper>

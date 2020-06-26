@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.wadreamer.cloudlearning.mapper.custom.UserDao">
+    <resultMap id="BaseResultMap" type="club.wadreamer.cloudlearning.model.auto.User">
+        <id column="uid" jdbcType="VARCHAR" property="uid"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="realname" jdbcType="VARCHAR" property="realname"/>
+        <result column="sex" jdbcType="VARCHAR" property="sex"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="area" jdbcType="VARCHAR" property="area"/>
+        <result column="avatar_path" jdbcType="VARCHAR" property="avatarPath"/>
+        <result column="last_login" jdbcType="TIMESTAMP" property="lastLogin"/>
+        <result column="is_use" jdbcType="INTEGER" property="isUse"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    uid, username, password, realname, sex, phone, email, province, city, area, avatar_path,
+    last_login, is_use
+    </sql>
+
+    <sql id="Base_Column_List_u">
+    u.uid, u.username, u.password, u.realname, u.sex, u.phone, u.email, u.province, u.city, u.area,
+    u.avatar_path,u.last_login, u.is_use
+  </sql>
+
+    <!--根据用户名获取数据库记录-->
+    <select id="getUserByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from c_user
+        where username = #{username}
+    </select>
+
+    <select id="search" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List_u"/>
+        from c_user u,c_user_role ur
+        where ur.rid = #{rid} and ur.uid = u.uid and u.${condition} like '%${content}%'
+        group by u.uid,ur.uid
+    </select>
+</mapper>

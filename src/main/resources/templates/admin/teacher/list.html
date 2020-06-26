@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${projectName}"></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,admin-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" th:href="@{/static/layui/css/xadmin.css}">
+    <script type="text/javascript" th:src="@{/static/layui/lib/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/static/layui/js/xadmin.js}"></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">教师列表</div>
+                <div class="layui-card-body ">
+                    <div class="layui-form layui-form-pane">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label" style="width: 15%">请选择搜索条件</label>
+                            <div class="layui-input-inline">
+                                <select name="condition" lay-search="">
+                                    <option value="">请选择</option>
+                                    <option value="username">用户名</option>
+                                    <option value="realname">真实姓名</option>
+                                    <option value="email">邮箱</option>
+                                    <option value="phone">联系方式</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" autocomplete="off" name="content"
+                                       class="layui-input" placeholder="请输入">
+                            </div>
+                            <div class="layui-input-inline">
+                                <button class="layui-btn" data-type="reload" id="search">
+                                    <i class="layui-icon">&#xe615;</i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-table" lay-filter="toolBar" id="user_list"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--模板引擎-->
+<script type="text/html" id="is_use">
+    <input type="checkbox" name="isUse" data-id="{{d.uid}}" lay-filter="isUse" lay-skin="switch" lay-text="启用|禁用"
+           {{d.isUse== 1 ? "checked" : "" }} >
+</script>
+
+<script type="text/html" id="avatar">
+    <img class="layui-nav-img" name="avatarPath" style="margin-right: 10px;"
+         lay-src="../static{{d.avatarPath}}"
+         src="../static{{d.avatarPath}}">
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-primary layui-btn-radius" lay-event="detail">详情</a>
+    <a class="layui-btn layui-btn-normal  layui-btn-radius" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-radius" lay-event="del">删除</a>
+</script>
+
+<!--<div th:replace="dialog_success :: html"></div>-->
+
+<script type="text/javascript" th:inline="javascript">
+    function createrFormat(o) {
+        return o;
+    }
+
+    window.rootPath = [[${rootPath}]];
+    layui.use(['table', 'laypage', 'form', 'layer','flow'], function () {
+        var table = layui.table,
+            form = layui.form,
+            layer = layui.layer,
+            flow = layui.flow;
+
+        flow.lazyimg();
+
+        //js渲染表格
+        table.render({
+            elem: '#user_list',
+            url: rootPath + '/TeacherController/teacher_list',
+            toolbar: true,
+            page: true,
+            limits: [5, 10, 15],
+            limit: 5,
+            groups: 3,
+            cols: [
+                [ //标题栏
+                    {
+                        templet: '<div>{{createrFormat(d.uid)}}</div>',
+                        title: 'ID',
+                        width: 100,
+                        sort: true,
+                        fixed: true
+                    },
+                    {
+                        templet: '<div>{{createrFormat(d.avatarPath)}}</div>',
+                        title: '头像',
+                        width: 100,
+                        templet: '#avatar'
+                    },
+                    {templet: '<div>{{createrFormat(d.username)}}</div>', title: '用户名', width: 120},
+                    {templet: '<div>{{createrFormat(d.realname)}}</div>', title: '真实姓名', width: 120},
+                    {
+                        templet: '<div>{{createrFormat(d.isUse)}}</div>',
+                        title: '是否启用',
+                        width: 100,
+                        templet: '#is_use'
+                    },
+                    {templet: '<div>{{createrFormat(d.email)}}</div>', title: '邮箱', width: 180},
+                    {templet: '<div>{{createrFormat(d.phone)}}</div>', title: '联系方式', width: 110},
+                    {fixed: 'right', width: 216, align: 'center', toolbar: '#barDemo'}
+                ]
+            ]
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(toolBar)', function (obj) {
+            console.log(obj);
+        });
+
+        //监听启用|禁用开关
+        form.on('switch(isUse)', function (data) {
+            var uid = $(this).attr('data-id');
+            var isUse = data.elem.checked ? 1 : 0;
+            $.ajax({
+                type: 'POST',
+                url: rootPath + '/TeacherController/useOrNot',
+                data: {uid: uid, isUse: isUse},
+                dataType: 'json',
+                success: function (res) {
+                    if (res.code == 200) {
+                        layer.msg(res.msg, {icon: 6, time: 2000});
+                    } else {
+                        layer.msg(res.msg, {icon: 5, time: 2000});
+                    }
+                },
+                error: function (res) {
+                    layer.msg(res.msg, {icon: 5, time: 2000});
+                }
+            });
+            // console.log(data.elem); //得到checkbox原始DOM对象
+            // console.log(data.elem.checked); //开关是否开启，true或者false
+            // console.log(data.value); //开关value值，也可以通过data.elem.value得到
+            // console.log(data.othis); //得到美化后的DOM对象
+        });
+
+        //监听工具条
+        table.on('tool(toolBar)', function (obj) {
+            var data = obj.data;
+            var uid = data.uid;
+            if (obj.event === 'detail') {
+                console.log(data);
+                layer.open({
+                    type: 2,
+                    title: '详细信息',
+                    content: rootPath + '/TeacherController/teacher_detail?uid=' + uid, //这里content是一个普通的String
+                    area: ['400px', '500px']
+                });
+            } else if (obj.event === 'del') {
+                layer.confirm('真的删除行么', function (obj) {
+                    $.ajax({
+                        type: 'POST',
+                        url: rootPath + '/TeacherController/teacher_del',
+                        data: {uid: uid},
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.code == 200) {
+                                layer.msg(res.msg, {icon: 6, time: 2000});
+                                table.reload('user_list', {
+                                    url: rootPath + '/TeacherController/teacher_list'
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 5, time: 2000});
+                            }
+                        },
+                        error: function (res) {
+                            layer.msg(res.msg, {icon: 5, time: 2000});
+                        }
+                    })
+                });
+            } else if (obj.event === 'edit') {
+                var edit_view = layer.open({
+                    type: 2,
+                    title: '修改信息',
+                    content: rootPath + "/TeacherController/teacher_edit_view?uid=" + uid, //这里content是一个普通的String
+                    maxmin: true
+                });
+                layer.full(edit_view);
+            }
+        });
+
+        var $ = layui.$, active = {
+            reload: function () {
+                var condition = $('select[name="condition"]').val();
+                var content = $('input[name="content"]').val();
+                console.log(condition + " ===>" + content);
+                if (condition == "") {
+                    layer.msg("请选择搜索条件", {icon: 5, time: 1000});
+                    return false;
+                }
+                if (content == "") {
+                    layer.msg("请输入搜索内容", {icon: 5, time: 1000})
+                    return false;
+                }
+                // 执行重载
+                table.reload('user_list', {
+                    url: rootPath + '/TeacherController/search',
+                    where: {
+                        condition: condition,
+                        content: content,
+                        rid: 2
+                    }
+                });
+            }
+        };
+
+        $('#search').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+</script>
+</body>
+</html>

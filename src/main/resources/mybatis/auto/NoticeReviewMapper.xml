@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.wadreamer.cloudlearning.mapper.auto.NoticeReviewMapper">
+    <resultMap id="BaseResultMap" type="club.wadreamer.cloudlearning.model.auto.NoticeReview">
+        <id column="review_id" jdbcType="INTEGER" property="reviewId"/>
+        <result column="uid" jdbcType="VARCHAR" property="uid"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="nid" jdbcType="INTEGER" property="nid"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="advice" jdbcType="VARCHAR" property="advice"/>
+        <result column="review_date" jdbcType="TIMESTAMP" property="reviewDate"/>
+        <result column="cname" jdbcType="VARCHAR" property="cname"/>
+        <result column="topic" jdbcType="VARCHAR" property="topic"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    review_id, uid, username, nid, status, advice, review_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from c_notice_review
+        where review_id = #{reviewId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from c_notice_review
+    where review_id = #{reviewId,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="club.wadreamer.cloudlearning.model.auto.NoticeReview">
+    insert into c_notice_review (review_id, uid, username, 
+      nid, status, advice, 
+      review_date)
+    values (#{reviewId,jdbcType=INTEGER}, #{uid,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
+      #{nid,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{advice,jdbcType=VARCHAR}, 
+      #{reviewDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="club.wadreamer.cloudlearning.model.auto.NoticeReview">
+        insert into c_notice_review
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="reviewId != null">
+                review_id,
+            </if>
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="nid != null">
+                nid,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="advice != null">
+                advice,
+            </if>
+            <if test="reviewDate != null">
+                review_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="reviewId != null">
+                #{reviewId,jdbcType=INTEGER},
+            </if>
+            <if test="uid != null">
+                #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="nid != null">
+                #{nid,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="advice != null">
+                #{advice,jdbcType=VARCHAR},
+            </if>
+            <if test="reviewDate != null">
+                #{reviewDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="club.wadreamer.cloudlearning.model.auto.NoticeReview">
+        update c_notice_review
+        <set>
+            <if test="uid != null">
+                uid = #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="nid != null">
+                nid = #{nid,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="advice != null">
+                advice = #{advice,jdbcType=VARCHAR},
+            </if>
+            <if test="reviewDate != null">
+                review_date = #{reviewDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where review_id = #{reviewId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="club.wadreamer.cloudlearning.model.auto.NoticeReview">
+    update c_notice_review
+    set uid = #{uid,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      nid = #{nid,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      advice = #{advice,jdbcType=VARCHAR},
+      review_date = #{reviewDate,jdbcType=TIMESTAMP}
+    where review_id = #{reviewId,jdbcType=INTEGER}
+  </update>
+
+    <select id="getHasReviewList" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        nr.review_id, nr.uid, nr.username, nr.nid, nr.status, nr.advice, nr.review_date,
+        n.nid, n.cid, c.cid, c.cname, n.topic
+        from c_notice_review nr, c_notice n, c_course c
+        where nr.nid = n.nid and n.cid = c.cid and nr.status = #{status}
+    </select>
+
+</mapper>

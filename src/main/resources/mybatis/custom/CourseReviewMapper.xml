@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.wadreamer.cloudlearning.mapper.custom.CourseReviewDao">
+    <resultMap id="CourseMap" type="club.wadreamer.cloudlearning.model.auto.Course">
+        <id column="cid" jdbcType="INTEGER" property="cid"/>
+        <result column="uid" jdbcType="VARCHAR" property="uid"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="st_id" jdbcType="INTEGER" property="stId"/>
+        <result column="st_name" jdbcType="VARCHAR" property="stName"/>
+        <result column="nd_id" jdbcType="INTEGER" property="ndId"/>
+        <result column="nd_name" jdbcType="VARCHAR" property="ndName"/>
+        <result column="cname" jdbcType="VARCHAR" property="cname"/>
+        <result column="pass" jdbcType="INTEGER" property="pass"/>
+        <result column="course_description" jdbcType="VARCHAR" property="courseDescription"/>
+        <result column="img_path" jdbcType="VARCHAR" property="imgPath"/>
+    </resultMap>
+
+    <select id="getUnreviewList" resultMap="CourseMap">
+        select
+        c.cid, c.uid, c.username, c.st_id, cst.st_name, c.nd_id, cnd.nd_name, c.cname,c.pass, c.course_description
+        from c_course c, c_course_st cst, c_course_nd cnd
+        where c.st_id = cst.st_id and c.nd_id = cnd.nd_id and c.pass = 0
+    </select>
+
+    <resultMap id="courseReviewLog" type="club.wadreamer.cloudlearning.model.custom.CourseReviewLog">
+        <id column="review_id" jdbcType="INTEGER" property="reviewId" />
+        <result column="uid" jdbcType="VARCHAR" property="uid" />
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="cid" jdbcType="INTEGER" property="cid" />
+        <result column="pass" jdbcType="INTEGER" property="pass" />
+        <result column="review_date" jdbcType="TIMESTAMP" property="reviewDate" />
+
+        <association property="course" column="cid" select="getCourseByKey"/>
+    </resultMap>
+
+    <select id="getUnpassList" resultMap="courseReviewLog">
+        select
+        rl.review_id, rl.uid, rl.username, rl.cid, rl.pass, rl.review_date
+        from c_review_log rl
+        where rl.pass = 1
+    </select>
+
+    <select id="getPassList" resultMap="courseReviewLog">
+        select
+        rl.review_id, rl.uid, rl.username, rl.cid, rl.pass, rl.review_date, rl.advice
+        from c_review_log rl
+        where rl.pass = 2
+    </select>
+
+    <select id="getCourseByKey" parameterType="java.lang.Integer" resultMap="CourseMap">
+        select
+        c.cid, c.st_id, cst.st_name, c.nd_id, cnd.nd_name, c.cname, c.course_description, c.advice
+        from c_course c, c_course_st cst, c_course_nd cnd
+        where c.st_id = cst.st_id and c.nd_id = cnd.nd_id and c.cid = #{cid,jdbcType=INTEGER}
+    </select>
+</mapper>

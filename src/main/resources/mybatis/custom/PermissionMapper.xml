@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.wadreamer.cloudlearning.mapper.custom.PermissionDao">
+    <resultMap id="BaseResultMap" type="club.wadreamer.cloudlearning.model.auto.Permission">
+        <id column="per_id" jdbcType="INTEGER" property="perId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="url" jdbcType="VARCHAR" property="url" />
+        <result column="is_blank" jdbcType="INTEGER" property="isBlank" />
+        <result column="pid" jdbcType="INTEGER" property="pid" />
+        <result column="perms" jdbcType="VARCHAR" property="perms" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="icon" jdbcType="VARCHAR" property="icon" />
+        <result column="order_num" jdbcType="INTEGER" property="orderNum" />
+        <result column="visible" jdbcType="INTEGER" property="visible" />
+        <result column="child_count" jdbcType="INTEGER" property="childCount" />
+    </resultMap>
+    <sql id="Base_Column_List">
+    p.per_id, p.name, p.description, p.url, p.is_blank, p.pid, p.perms, p.type, p.icon, p.order_num, p.visible
+    </sql>
+
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />,
+        (select count(1) from c_permission where pid = p.per_id) child_count
+        from c_permission p
+    </select>
+
+    <select id="queryByUserId" resultMap="BaseResultMap">
+        select distinct <include refid="Base_Column_List" />,
+        (select count(1) from c_permission where pid=p.per_id) child_count
+        from c_role_permission pr,c_user_role ur,c_permission p
+        where pr.rid = ur.rid and pr.per_id = p.per_id and ur.uid = #{uid}
+		group by p.per_id, p.pid
+		order by p.order_num is null ASC,p.order_num ASC
+    </select>
+
+    <select id="queryByRoleId"  parameterType="Integer" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />,
+        (select count(1) from c_permission where pid = p.per_id) child_count
+        from c_permission p
+        inner join c_role_permission rp on rp.per_id = p.per_id
+        where rp.rid=#{rid}
+    </select>
+
+</mapper>

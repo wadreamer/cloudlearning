@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${projectName}"></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,admin-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" th:href="@{/static/layui/css/xadmin.css}">
+    <script type="text/javascript" th:src="@{/static/layui/lib/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/static/layui/js/xadmin.js}"></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">视频上传</div>
+                <div class="layui-card-body ">
+                    <div class="layui-form layui-form-pane">
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">所属课程</label>
+                            <div class="layui-input-inline">
+                                <select name="cid" id="cid" lay-filter="cid" lay-verify="cid">
+                                    <option value="">请选择...</option>
+                                    <option th:each="c,cStat : ${courses}"
+                                            th:value="${c.cid}"
+                                            th:text="${c.cname}"></option>
+                                </select>
+                            </div>
+
+                            <label class="layui-form-label">所属章节</label>
+                            <div class="layui-input-inline">
+                                <select name="chapterId" id="chapterId" lay-filter="chapterId" lay-verify="chapterId">
+                                    <option value="">请选择...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-form-label">视频名称</div>
+                            <div class="layui-input-block">
+                                <input type="text" name="videoDescription" lay-verify="videoDescription"
+                                       autocomplete="off"
+                                       class="layui-input" placeholder="请输入...如1-1 走进springboot">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-form-label">视频序号</div>
+                            <div class="layui-input-block">
+                                <input type="text" name="orderNum" lay-verify="orderNum" autocomplete="off"
+                                       class="layui-input" placeholder="请输入该视频在章节中的序号">
+                            </div>
+                        </div>
+
+                        <hr class="layui-bg-green" style="margin-top: 10px;margin-bottom: 20px;">
+
+                        <div class="layui-form-item">
+                            <button type="button" class="layui-btn layui-btn-normal" id="chooseVideo">选择文件</button>
+                            <div class="layui-upload-list">
+                                <table class="layui-table">
+                                    <thead>
+                                    <tr>
+                                        <th>文件名</th>
+                                        <th>大小</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="videoList"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button type="submit" id="upload" class="layui-btn" lay-submit="">提交</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" th:inline="javascript">
+    window.rootPath = [[${rootPath}]];
+
+    layui.use(['form', 'layer', 'upload', 'element'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            upload = layui.upload,
+            element = layui.element;
+
+        element.init();
+
+        //自定义验证规则
+        form.verify({
+            cid: function (value) {
+                if (value == "") {
+                    return "请选择视频所属课程";
+                }
+            },
+            chapterId: function (value) {
+                if (value == "") {
+                    return "请选择视频所属章节";
+                }
+            },
+            videoDescription: function (value) { //value：表单的值、item：表单的DOM对象
+                if (value == "") {
+                    return "视频名称不能为空";
+                }
+            },
+            orderNum: function (value) { //value：表单的值、item：表单的DOM对象
+                if (value == "") {
+                    return "请输入该视频在章节中的序号";
+                }
+                if (!new RegExp("^[1-9]\\d*$").test(value)) {
+                    return '序号只能是正整数';
+                }
+            }
+        });
+
+        form.on('select(cid)', function (data) {
+            var cid = $("#cid").find("option:selected").val();
+            $.ajax({
+                type: "post",
+                url: rootPath + "/ChapterController/chapters?cid=" + cid,
+                dataType: "json",
+                async: true,
+                success: function (result) {
+                    var list = result.data;
+                    var str = '';
+                    for (var i = 0; i < list.length; i++) {
+                        str += "<option value='" + list[i].chapterId + "'>" + list[i].chapter + "</option>"
+                    }
+                    $("#chapterId").html(str);
+                    form.render("select");//重新加载
+                },
+                error: function () {
+                    console.log("获取章节信息失败，请稍后重试！");
+                }
+            });
+        });
+
+        var files;
+        //多文件列表示例
+
+        var loadIndex;
+
+        var demoListView = $('#videoList'),
+            uploadListIns = upload.render({
+                elem: '#chooseVideo',
+                url: rootPath + '/VideoController/video_upload', //改成您自己的上传接口
+                accept: 'video',
+                // ,field : 'videoList'
+                multiple: false,
+                number: 1,
+                async: false,
+                auto: false,
+                bindAction: '#upload',
+                loading: true, //翻页加loading
+                choose: function (obj) {
+                    files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                    //读取本地文件
+                    console.log(obj);
+                    obj.preview(function (index, file, result) {
+                        var tr = $(['<tr id="upload-' + index + '">',
+                            '<td>' + file.name + '</td>',
+                            '<td>' + (file.size / 1024).toFixed(1) + 'kb</td>',
+                            '<td>等待上传</td>',
+                            '<td>',
+                            '<button class="layui-btn layui-btn-xs demo-reload layui">重传</button>',
+                            '<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>',
+                            '</td>',
+                            '</tr>'].join(''));
+
+                        //单个重传
+                        tr.find('.demo-reload').on('click', function () {
+                            obj.upload(index, file);
+                        });
+
+                        //删除
+                        tr.find('.demo-delete').on('click', function () {
+                            delete files[index]; //删除对应的文件
+                            tr.remove();
+                            uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                            orderNum = orderNum - 1;
+                        });
+
+                        demoListView.append(tr);
+                    });
+                },
+
+                before: function (obj) {//上传表单数据
+                    console.log(obj);
+                    loadIndex = layer.load(1, {shade: [0.1,'#fff']});
+
+                    this.data = {
+                        cid: $('select[name="cid"]').val(),
+                        chapterId: $('select[name="chapterId"]').val(),
+                        videoDescription: $('input[name="videoDescription"]').val(),
+                        orderNum: $('input[name="orderNum"]').val()
+                        // files: files
+                    }
+                },
+                done: function (res, index) {
+                    layer.close(loadIndex);
+
+                    if (res.code == 200) { //上传成功
+                        var tr = demoListView.find('tr#upload-' + index)
+                            , tds = tr.children();
+                        tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+                        tds.eq(3).html(''); //清空操作
+                        delete this.files[index]; //删除文件队列已经上传成功的文件
+                        // window.location.reload();
+                    } else {
+                        layer.msg(res.msg, {icon: 5, time: 2000})
+                    }
+                },
+                error: function (index, upload) {
+                    var tr = demoListView.find('tr#upload-' + index)
+                        , tds = tr.children();
+                    tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+                    tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+                }
+            });
+    });
+</script>
+</body>
+</html>

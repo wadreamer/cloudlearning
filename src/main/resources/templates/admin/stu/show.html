@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}"></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,admin-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" th:href="@{/static/layui/css/font.css}">
+    <link rel="stylesheet" th:href="@{/static/layui/css/xadmin.css}">
+    <script type="text/javascript" th:src="@{/static/js/jquery-2.2.3.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/layui/lib/layui/layui.js}"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/htl5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>m
+    <![endif]-->
+</head>
+<body>
+<div class="layui-form-item" style="text-align: center;">
+    <img class="layui-nav-img-update" name="image" id="image" style="margin-right: 10px;"
+         th:attr="lay-src='../static'+${user.avatarPath},src='../static/'+${user.avatarPath}"
+         lay-src=""
+         src="">
+</div>
+<hr class="layui-bg-green" style="margin-top: 10px;margin-bottom: 20px;">
+
+<table class="layui-table" style="text-align: center">
+    <form class="layui-form layui-form-pane">
+        <tr>
+            <td><h3>ID</h3></td>
+            <td><h3 th:text="${user.uid}"></h3></td>
+        </tr>
+        <tr>
+            <td><h3>用户名</h3></td>
+            <td><h3 th:text="${user.username}"></h3></td>
+        </tr>
+
+        <tr>
+            <td><h3>真实姓名</h3></td>
+            <td><h3 th:text="${user.realname}"></h3></td>
+        </tr>
+
+        <tr>
+            <td><h3>邮箱</h3></td>
+            <td><h3 th:text="${user.email}"></h3></td>
+        </tr>
+
+        <tr>
+            <td><h3>联系方式</h3></td>
+            <td><h3 th:text="${user.phone}"></h3></td>
+        </tr>
+
+        <tr>
+            <td><h3>性别</h3></td>
+            <td><h3 th:text="${user.sex}"></h3></td>
+        </tr>
+
+        <tr>
+            <td><h3>籍贯</h3></td>
+            <td><h3 th:text="${user.province}+${user.city}+${user.area}"></h3></td>
+        </tr>
+
+        <tr>
+            <td><h3>最后一次登录时间</h3></td>
+            <td><h3 th:text="${user.lastLogin}"></h3></td>
+        </tr>
+
+    </form>
+</table>
+</body>
+</html>

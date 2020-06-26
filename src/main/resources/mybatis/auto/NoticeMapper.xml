@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.wadreamer.cloudlearning.mapper.auto.NoticeMapper">
+    <resultMap id="BaseResultMap" type="club.wadreamer.cloudlearning.model.auto.Notice">
+        <id column="nid" jdbcType="INTEGER" property="nid"/>
+        <result column="uid" jdbcType="VARCHAR" property="uid"/>
+        <result column="cname" jdbcType="VARCHAR" property="cname"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="cid" jdbcType="INTEGER" property="cid"/>
+        <result column="topic" jdbcType="VARCHAR" property="topic"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate"/>
+        <result column="advice" jdbcType="VARCHAR" property="advice"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    nid, uid, username, cid, topic, content, publish_date, advice, status
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from c_notice
+        where nid = #{nid,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from c_notice
+    where nid = #{nid,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="club.wadreamer.cloudlearning.model.auto.Notice">
+    insert into c_notice (nid, uid, username, 
+      cid, topic, content, 
+      publish_date, advice, status
+      )
+    values (#{nid,jdbcType=INTEGER}, #{uid,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
+      #{cid,jdbcType=INTEGER}, #{topic,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
+      #{publishDate,jdbcType=TIMESTAMP}, #{advice,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="club.wadreamer.cloudlearning.model.auto.Notice">
+        insert into c_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="nid != null">
+                nid,
+            </if>
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="cid != null">
+                cid,
+            </if>
+            <if test="topic != null">
+                topic,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="publishDate != null">
+                publish_date,
+            </if>
+            <if test="advice != null">
+                advice,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="nid != null">
+                #{nid,jdbcType=INTEGER},
+            </if>
+            <if test="uid != null">
+                #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="cid != null">
+                #{cid,jdbcType=INTEGER},
+            </if>
+            <if test="topic != null">
+                #{topic,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="publishDate != null">
+                #{publishDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="advice != null">
+                #{advice,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="club.wadreamer.cloudlearning.model.auto.Notice">
+        update c_notice
+        <set>
+            <if test="uid != null">
+                uid = #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="cid != null">
+                cid = #{cid,jdbcType=INTEGER},
+            </if>
+            <if test="topic != null">
+                topic = #{topic,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="publishDate != null">
+                publish_date = #{publishDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="advice != null">
+                advice = #{advice,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+        </set>
+        where nid = #{nid,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="club.wadreamer.cloudlearning.model.auto.Notice">
+    update c_notice
+    set uid = #{uid,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      cid = #{cid,jdbcType=INTEGER},
+      topic = #{topic,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      publish_date = #{publishDate,jdbcType=TIMESTAMP},
+      advice = #{advice,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER}
+    where nid = #{nid,jdbcType=INTEGER}
+  </update>
+
+    <select id="getNoticeListByUid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        n.nid, n.uid, c.cname, n.topic, n.content, n.publish_date, n.advice, n.status, n.cid, n.username
+        from c_notice n, c_course c
+        where n.uid = #{uid} and n.cid = c.cid
+    </select>
+
+    <select id="getNoticeByKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        n.nid, n.uid, c.cname, n.topic, n.content, n.publish_date, n.advice, n.status, n.cid, n.username
+        from c_notice n, c_course c
+        where n.nid = #{nid} and n.cid = c.cid
+    </select>
+
+    <select id="getUnreviewList" resultMap="BaseResultMap">
+        select
+        n.nid, c.cname, n.topic, n.content, n.publish_date, n.advice, n.status, n.cid, n.username
+        from c_notice n, c_course c
+        where n.cid = c.cid and n.status = 0
+    </select>
+
+    <update id="updateStatusAndAdviceByNid">
+    update c_notice
+    set status = #{status,jdbcType=INTEGER},advice = #{advice,jdbcType=VARCHAR}
+    where nid = #{nid,jdbcType=INTEGER}
+  </update>
+
+
+</mapper>

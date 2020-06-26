@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.wadreamer.cloudlearning.mapper.custom.VideoDao">
+    <resultMap id="BaseResultMap" type="club.wadreamer.cloudlearning.model.custom.Video">
+        <id column="vid" jdbcType="INTEGER" property="vid" />
+        <result column="cname" jdbcType="VARCHAR" property="cname" />
+        <result column="chapter" jdbcType="VARCHAR" property="chapter" />
+        <result column="video_description" jdbcType="VARCHAR" property="videoDescription" />
+        <result column="upload_date" jdbcType="TIMESTAMP" property="uploadDate" />
+        <result column="order_num" jdbcType="INTEGER" property="orderNum" />
+    </resultMap>
+
+    <select id="getVideoListByUid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        v.vid, c.cname, ch.chapter, v.video_description, v.upload_date, v.order_num
+        from c_video v, c_course c, c_chapter ch
+        where v.cid = c.cid and v.chapter_id = ch.chapter_id and v.uid = #{uid}
+    </select>
+
+
+
+</mapper>

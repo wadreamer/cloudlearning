@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title th:text="${projectName}"></title>
+    <link rel="stylesheet" th:href="@{/static/videoplay/video.css}">
+    <!--icons -->
+    <link rel="icon" th:href="@{/static/admin/images/favicon.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/static/videoplay/font-awesome.css}">
+    <script type="text/javascript" th:src="@{/static/videoplay/TouchSlide.1.1.js}"></script>
+    <script type="text/javascript" th:src="@{/static/videoplay/jquery-1.8.3.min.js}"></script>
+</head>
+<body>
+<div class="all_body">
+    <div class="line"></div>
+    <div class="logo"></div>
+    <div class="up">
+        <i class="fa fa-chevron-up" aria-hidden="true"></i>
+    </div>
+    <div class="down">
+        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+    </div>
+    <!-- 视频部分 -->
+    <div class="box">
+        <p class="word">
+            <span class="boxx1">课时</span>
+            <span class="boxx4" th:text="${course.list[0]?.videos[0]?.videoDescription}"
+                  id="videoDesc">Ajax-ajax传递&请求本地数据库</span>
+        </p>
+        <div class="video">
+            <div class="video_box">
+                <video th:attr="src=${course.list[0]?.videos[0]?.videoPath}" controls="controls"
+                       id="videoplay"></video>
+            </div>
+        </div>
+        <!-- 课程介绍 -->
+        <div class="sidebox">
+            <div class="video_name">
+                <div class="course">
+                    <a href="javascript:" th:text="${course.cname}">快速入门css</a>
+                    <p th:text="'发布者：' + ${course.teacher}">发布者：Web前端网站..</p>
+                </div>
+                <div class="photo">
+                    <a href="javascript:">
+                        <img src="images/js.jpeg" alt="javascript视频"
+                             th:attr="src=${course.imgPath}">
+                    </a>
+                </div>
+            </div>
+            <!-- 切换 -->
+            <div class="limit">
+                <div class="limit_style">
+                    <ul>
+                        <li>
+                            <a href="javascript:">
+                                <i class="fa fa-newspaper-o" aria-hidden="true"></i>
+                                目录
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="limit_content">
+                    <!-- 目录 -->
+                    <div class="title0">
+                        <div class="title0_">
+                            <ul class="t1" th:each="c : ${course.list}">
+                                <li>
+                                    <span th:text="${c.chapter}">课时1</span>
+                                    <!--<span>课程代码和联系方式</span>-->
+                                    <!--<span>08:00</span>-->
+                                    <ul class="t2">
+                                        <li th:each="v : ${c.videos != null ? c.videos : ''}">
+                                            <a href="javascript:;"
+                                               th:onclick="changeVideo([[${v.videoPath}]],[[${v.videoDescription}]])"
+                                               th:text="${v.videoDescription}">第一章简介</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="open">
+        <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+    </div>
+    <div class="open1">
+        <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+    </div>
+
+    <script type="text/javascript">
+
+        function changeVideo(videoPath, videoDesc) {
+            console.log(videoPath, videoDesc);
+            $("#videoplay").attr("src", videoPath);
+            $("#videoDesc").text(function () {
+                return videoDesc;
+            });
+        }
+
+        $(function () {
+            if ($(".open").click(function () {
+                $(".sidebox").hide();
+                $(".video").css("width", "100%");
+                $(".open").css({"display": "none"});
+                $(".open1").css({"display": "block"})
+            })
+            ) ;
+            $(".open1").click(function () {
+                $(".sidebox").show();
+                $(".video").css("width", "75%");
+                $(".open1").css({"display": "none"});
+                $(".open").css({"display": "block"})
+            });
+        });
+
+    </script>
+</div>
+</body>
+</html>

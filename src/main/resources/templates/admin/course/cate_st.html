@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${projectName}"></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,admin-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" th:href="@{/static/layui/css/xadmin.css}">
+    <script type="text/javascript" th:src="@{/static/layui/lib/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/static/layui/js/xadmin.js}"></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">一级分类</div>
+                <div class="layui-card-body ">
+                    <div class="layui-form layui-form-pane">
+                        <div class="layui-btn-group demoTable">
+                            <button class="layui-btn" data-type="addCateSt">新增一级分类</button>
+                        </div>
+                    </div>
+                    <table class="layui-table" lay-filter="toolBar" id="list"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-normal  layui-btn-radius" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-radius" lay-event="del">删除</a>
+</script>
+
+<script type="text/javascript" th:inline="javascript">
+    function createrFormat(o) {
+        return o;
+    }
+
+    window.rootPath = [[${rootPath}]];
+    layui.use(['table', 'laypage', 'form', 'layer'], function () {
+        var table = layui.table,
+            form = layui.form,
+            layer = layui.layer;
+
+        //js渲染表格
+        table.render({
+            elem: '#list',
+            url: rootPath + '/CourseStController/cate_st_list',
+            toolbar: true,
+            page: true,
+            limits: [5, 10,15],
+            limit: 5,
+            groups: 3,
+            cols: [
+                [ //标题栏
+                    {
+                        templet: '<div>{{createrFormat(d.stId)}}</div>',
+                        title: 'ID',
+                        sort: true,
+                        fixed: true
+                    },
+                    {templet: '<div>{{createrFormat(d.stName)}}</div>', title: '一级类名'},
+                    {fixed: 'right', width: 216, align: 'center', toolbar: '#barDemo'}
+                ]
+            ]
+        });
+
+        //监听工具条
+        table.on('tool(toolBar)', function (obj) {
+            var data = obj.data;
+            var stId = data.stId;
+            if (obj.event === 'del') {
+                layer.confirm('真的删除行么', function (obj) {
+                    $.ajax({
+                        type: 'POST',
+                        url: rootPath + '/CourseStController/cate_st_del',
+                        data: {stId: stId},
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.code == 200) {
+                                layer.msg(res.msg, {icon: 6, time: 2000});
+                                table.reload('list', {
+                                    url: rootPath + '/CourseStController/cate_st_list'
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 5, time: 2000});
+                            }
+                        },
+                        error: function (res) {
+                            layer.msg(res.msg, {icon: 5, time: 2000});
+                        }
+                    })
+                });
+            } else if (obj.event === 'edit') {
+                layer.open({
+                    type: 2,
+                    title: '修改信息',
+                    content: rootPath + "/CourseStController/cate_st_edit_view?stId=" + stId, //这里content是一个普通的String
+                    area: ['400px', '300px']
+                });
+            }
+        });
+
+        var $ = layui.$, active = {
+            addCateSt: function () { //获取选中数据
+                layer.open({
+                    type: 2,
+                    title: '新增',
+                    content: rootPath + '/CourseStController/cate_st_add_view', //这里content是一个普通的String
+                    area: ['400px', '300px']
+                });
+            }
+        };
+
+        $('.demoTable .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+</script>
+</body>
+</html>
